@@ -1,0 +1,31 @@
+{
+  "name": "clicktonext/kirby-accordion-field",
+  "description": "Collapses the content below headlines in Panel for Kirby 3.",
+  "type": "kirby-plugin",
+  "version": "1.0.0",
+  "license": "MIT",
+  "keywords": [
+    "kirby",
+    "kirby-3",
+    "kirby3-plugin",
+    "kirby-plugin",
+    "kirby-accordion"
+  ],
+  "authors": [
+    {
+      "name": "Click to Next",
+      "email": "support@clicktonext.com",
+      "homepage": "https://clicktonext"
+    }
+  ],
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
+  "require": {
+    "getkirby/composer-installer": "^1.2"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

@@ -90,20 +90,17 @@ class AccordionField extends FieldClass
 
     protected function setFieldsets(array $fieldsets): self
     {
-        // normalize fieldsets
         foreach ($fieldsets as $key => &$fieldset) {
             $fieldset = Blueprint::extend($fieldset);
 
-            $fields = $fieldset['fields'] ?? [];
-            foreach ($fields as $fieldName => $field) {
-                $this->fields[$fieldName] = $field;
-            }
-
-            $formFields = $this->form($fields, $this->value ?? [])->fields();
+            // extends fieldsets and fields
+            $fields = Blueprint::fieldsProps($fieldset['fields'] ?? []);
+            $this->fields = array_replace_recursive($this->fields, $fields);
+            $fields = $this->form($fields, $this->value ?? [])->fields();
 
             $fieldset['name'] = $key;
             $fieldset['label'] = I18n::translate($fieldset['label'], $fieldset['label']);
-            $fieldset['fields'] = $formFields->toArray();
+            $fieldset['fields'] = $fields->toArray();
             $fieldset['headline'] = $fieldset['headline'] ?? null;
             $fieldset['open'] = $fieldset['open'] ?? false;
         }

@@ -106,7 +106,7 @@ fields:
 Assigns all fields in accordion to the object.
 
 ```php
-if ($profile = $page->accordion()->toAccordion()) 
+if ($profile = $page->accordion()->toAccordion())
 {
   echo $profile->first_name();
   echo $profile->last_name();
@@ -130,8 +130,8 @@ The default values of the package are:
 | Property | Type | Default| Description |
 |:--- |:---|:---|:---|
 | fieldesets | array | [] | Allows to define different form fields for each accordion |
-| fieldesets.field.open | boolean | false | Allows it to be loaded collapsed/expanded by default |
-| fieldesets.field.headline | string | null | Helps to add extra dynamic headline to each accordion and supports query template. |
+| fieldesets.open | boolean | false | Allows it to be loaded collapsed/expanded by default |
+| fieldesets.headline | string | null | Helps to add extra dynamic headline to each accordion and supports query template. |
 | pretty | boolean | false | Saves pretty printed JSON in text files |
 | preview | string | null | Provides preview output for structure field and supports query template |
 | toggle | boolean | true | Allows only one accordion to remain open when enabled |

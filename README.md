@@ -135,5 +135,3 @@ The default values of the package are:
 | pretty | boolean | false | Saves pretty printed JSON in text files |
 | preview | string | null | Provides preview output for structure field and supports query template |
 | toggle | boolean | true | Allows only one accordion to remain open when enabled |
-
-All the values can be updated in the `config.php` file.

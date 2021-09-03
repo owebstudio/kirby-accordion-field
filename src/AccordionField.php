@@ -5,34 +5,36 @@ namespace Kirby\Form\Field;
 use Kirby\Cms\Blueprint;
 use Kirby\Exception\InvalidArgumentException;
 use Kirby\Form\FieldClass;
-use Kirby\Form\Fields;
 use Kirby\Form\Form;
 use Kirby\Toolkit\I18n;
 
 class AccordionField extends FieldClass
 {
-    protected $fields;
+    protected $fields = [];
     protected $fieldsets;
     protected $pretty;
+    protected $preview;
     protected $toggle;
-    protected $value = [];
+    protected $value;
 
     public function __construct(array $params = [])
     {
-        parent::__construct($params);
-
-        $this->setPretty($params['pretty'] ?? false);
-        $this->setToggle($params['toggle'] ?? true);
+        $this->setModel($params['model'] ?? site());
         $this->setFieldsets($params['fieldsets'] ?? []);
+        $this->setPretty($params['pretty'] ?? false);
+        $this->setPreview($params['preview'] ?? null);
+        $this->setToggle($params['toggle'] ?? true);
+
+        parent::__construct($params);
     }
 
-    public function fields(string $fieldset = null): Fields
+    public function fields(string $fieldset = null): array
     {
         if (empty($fieldset) === false) {
-            return $this->fieldsets[$fieldset]['fields'] ?? new Fields();
+            return $this->fieldsets[$fieldset]['fields'] ?? [];
         }
 
-        return $this->fields ?? new Fields();
+        return $this->fields;
     }
 
     public function fieldsets(): array
@@ -44,7 +46,7 @@ class AccordionField extends FieldClass
     {
         return new Form([
             'fields' => $fields,
-            'model' => $this->model,
+            'model' => $this->model(),
             'strict' => true,
             'values' => $input
         ]);
@@ -52,12 +54,23 @@ class AccordionField extends FieldClass
 
     public function fill($value = null)
     {
-        return $this->value = $this->valueFromJson($value);
+        if ($value === null) {
+            $fields = $this->fields();
+            $defaults = $this->form($fields, [])->data(true);
+            $this->value = $this->form($fields, $defaults)->values();
+        } else {
+            $this->value = $this->valueFromJson($value);
+        }
     }
 
     public function pretty(): bool
     {
         return $this->pretty;
+    }
+
+    public function preview(): ?string
+    {
+        return $this->preview;
     }
 
     public function toggle(): bool
@@ -70,26 +83,29 @@ class AccordionField extends FieldClass
         return array_merge([
             'fieldsets' => $this->fieldsets(),
             'pretty' => $this->pretty(),
+            'preview' => $this->preview(),
             'toggle' => $this->toggle(),
         ], parent::props());
     }
 
-    protected function setFieldsets(array $fieldsets = []): self
+    protected function setFieldsets(array $fieldsets): self
     {
-        $this->fields = new Fields();
-
         // normalize fieldsets
         foreach ($fieldsets as $key => &$fieldset) {
             $fieldset = Blueprint::extend($fieldset);
 
-            $fields = $this->form($fieldset['fields'] ?? [], $this->value)->fields();
+            $fields = $fieldset['fields'] ?? [];
+            foreach ($fields as $fieldName => $field) {
+                $this->fields[$fieldName] = $field;
+            }
+
+            $formFields = $this->form($fields, $this->value ?? [])->fields();
 
             $fieldset['name'] = $key;
             $fieldset['label'] = I18n::translate($fieldset['label'], $fieldset['label']);
-            $fieldset['fields'] = $fields->toArray();
+            $fieldset['fields'] = $formFields->toArray();
+            $fieldset['headline'] = $fieldset['headline'] ?? null;
             $fieldset['open'] = $fieldset['open'] ?? false;
-
-            $this->fields->append($fields);
         }
 
         $this->fieldsets = $fieldsets;
@@ -100,6 +116,11 @@ class AccordionField extends FieldClass
     protected function setPretty(bool $pretty = false)
     {
         $this->pretty = $pretty;
+    }
+
+    protected function setPreview(string $preview = null)
+    {
+        $this->preview = $preview;
     }
 
     protected function setToggle(bool $toggle = true)
@@ -117,9 +138,9 @@ class AccordionField extends FieldClass
         return [
             'accordion' => function ($value) {
                 $errors = [];
-                $fields = $this->fields()->toArray();
+                $fields = $this->form($this->fields(), $value)->fields();
 
-                foreach ($this->form($fields, $value)->fields() as $field) {
+                foreach ($fields as $field) {
                     $fieldErrors = $field->errors();
 
                     // rough first validation

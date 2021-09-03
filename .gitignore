@@ -3,4 +3,4 @@ package-lock.json
 .idea
 .cache
 .DS_Store
-.node_modules
+node_modules

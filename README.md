@@ -1,12 +1,5 @@
 # Kirby Accordion Field
 
-[![Source](https://img.shields.io/badge/source-clicktonext/kirby-accordion-field-blue?style=flat-square)](https://github.com/clicktonext/kirby-accordion-field)
-[![Download](https://img.shields.io/packagist/dt/clicktonext/kirby-accordion-field?style=flat-square)](https://github.com/clicktonext/kirby-accordion-field)
-[![Open Issues](https://img.shields.io/github/issues-raw/clicktonext/kirby-accordion-field?style=flat-square)](https://github.com/clicktonext/kirby-accordion-field)
-[![Last Commit](https://img.shields.io/github/last-commit/clicktonext/kirby-accordion-field?style=flat-square)](https://github.com/clicktonext/kirby-accordion-field)
-[![Release](https://img.shields.io/github/v/release/clicktonext/kirby-accordion-field?style=flat-square)](https://github.com/clicktonext/kirby-accordion-field)
-[![License](https://img.shields.io/github/license/clicktonext/kirby-accordion-field?style=flat-square)](https://github.com/clicktonext/kirby-accordion-field)
-
 Kirby accordion field plugin collapses the content below headlines in Panel for Kirby 3.
 
 ![kirby-accordion-field](https://user-images.githubusercontent.com/3393422/131719194-395ec239-d88a-4866-b754-9a023dce02de.png)
@@ -33,13 +26,15 @@ fields:
     label: Profile
     type: accordion
     toggle: true
-    pretty: false
+    pretty: true
+    preview: "{{first_name}} {{last_name}}"
     fieldsets:
       step01:
         label:
           tr: Adım 01
           en: Step 01
         open: true
+        headline: "{{first_name}} {{last_name}}"
         fields:
           first_name:
             label: First name
@@ -136,7 +131,9 @@ The default values of the package are:
 |:--- |:---|:---|:---|
 | fieldesets | array | [] | Allows to define different form fields for each accordion |
 | fieldesets.field.open | boolean | false | Allows it to be loaded collapsed/expanded by default |
+| fieldesets.field.headline | string | null | Helps to add extra dynamic headline to each accordion and supports query template. |
 | pretty | boolean | false | Saves pretty printed JSON in text files |
+| preview | string | null | Provides preview output for structure field and supports query template |
 | toggle | boolean | true | Allows only one accordion to remain open when enabled |
 
 All the values can be updated in the `config.php` file.

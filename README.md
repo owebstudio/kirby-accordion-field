@@ -96,27 +96,27 @@ fields:
               sql: SQL
               vue: Vue
               html: HTML
+
 ```
 
-## Methods
+## Field methods
 
 ### `->toAccordion()`
 
 Assigns all fields in accordion to the object.
 
 ```php
-
-$profile = $page->accordion()->toAccordion();
-echo $profile->first_name();
-
+if ($profile = $page->accordion()->toAccordion()) 
+{
+  echo $profile->first_name();
+  echo $profile->last_name();
+}
 ```
 
-### `->toFields()`
-
-Returns all fields in accordion field as array.
+Returns all fields in accordion field as array with passing `true` param.
 
 ```php
-$fields = $page->accordion()->toFields();
+$fields = $page->accordion()->toAccordion(true);
 
 foreach ($fields as $field) {
   echo $field->value();

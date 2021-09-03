@@ -14,12 +14,15 @@ Kirby::plugin('clicktonext/kirby-accordion-field', [
         'accordion' => AccordionField::class
     ],
     'fieldMethods' => [
-        'toAccordion' => function ($field) {
+        'toAccordion' => function ($field, bool $arrayFields = false) {
             $data = Data::decode($field->value, 'json');
-            return new Content($data, $field->parent());
-        },
-        'toFields' => function ($field) {
-            return $field->toAccordion($field)->fields();
+            $content = new Content($data, $field->parent());
+
+            if ($arrayFields === true) {
+                return $content->fields();
+            }
+
+            return $content;
         }
     ]
 ]);

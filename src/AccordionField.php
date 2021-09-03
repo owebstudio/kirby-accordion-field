@@ -140,7 +140,6 @@ class AccordionField extends FieldClass
                 foreach ($fields as $field) {
                     $fieldErrors = $field->errors();
 
-                    // rough first validation
                     if (empty($fieldErrors) === false) {
                         $errors = array_merge($errors, $fieldErrors);
                     }

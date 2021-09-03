@@ -54,12 +54,18 @@ class AccordionField extends FieldClass
 
     public function fill($value = null)
     {
-        if ($value === null) {
+        try {
             $fields = $this->fields();
-            $defaults = $this->form($fields, [])->data(true);
-            $this->value = $this->form($fields, $defaults)->values();
-        } else {
-            $this->value = $this->valueFromJson($value);
+
+            // set default values when initialization form
+            if ($value === null) {
+                $defaults = $this->form($fields, [])->data(true);
+                $this->value = $this->form($fields, $defaults)->values();
+            } else {
+                $this->value = $this->form($fields, $this->valueFromJson($value))->values();
+            }
+        } catch (Exception $e) {
+            $this->value = [];
         }
     }
 
@@ -88,7 +94,7 @@ class AccordionField extends FieldClass
         ], parent::props());
     }
 
-    protected function setFieldsets(array $fieldsets): self
+    protected function setFieldsets(array $fieldsets): void
     {
         foreach ($fieldsets as $key => &$fieldset) {
             $fieldset = Blueprint::extend($fieldset);
@@ -106,28 +112,27 @@ class AccordionField extends FieldClass
         }
 
         $this->fieldsets = $fieldsets;
-
-        return $this;
     }
 
-    protected function setPretty(bool $pretty = false)
+    protected function setPretty(bool $pretty = false): void
     {
         $this->pretty = $pretty;
     }
 
-    protected function setPreview(string $preview = null)
+    protected function setPreview(string $preview = null): void
     {
         $this->preview = $preview;
     }
 
-    protected function setToggle(bool $toggle = true)
+    protected function setToggle(bool $toggle = true): void
     {
         $this->toggle = $toggle;
     }
 
     public function store($value)
     {
-        return $this->valueToJson($value, $this->pretty());
+        $value = $this->valueToJson($value, $this->pretty());
+        return empty($value) == false ? $value : '';
     }
 
     public function validations(): array

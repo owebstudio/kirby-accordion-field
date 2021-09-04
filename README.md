@@ -26,8 +26,14 @@ fields:
     label: Profile
     type: accordion
     toggle: true
+    reset: true
     pretty: true
-    preview: "{{first_name}} {{last_name}}"
+    preview: "{{first_name}} {{last_name}} - {{country}}"
+    default:
+      first_name: John
+      last_name: Doe
+      phone: "671-969-4772"
+      email: john@doe.com
     fieldsets:
       step01:
         label:
@@ -135,4 +141,5 @@ The default values of the package are:
 | fieldesets.headline | string | null | Helps to add extra dynamic headline to each accordion and supports query template. |
 | pretty | boolean | false | Saves pretty printed JSON in text files |
 | preview | string | null | Provides preview output for structure field and supports query template |
+| reset | boolean | false | Restores the default values to the form if `default` prop is filled |
 | toggle | boolean | true | Allows only one accordion to remain open when enabled |

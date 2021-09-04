@@ -14,6 +14,7 @@ class AccordionField extends FieldClass
     protected $fieldsets;
     protected $pretty;
     protected $preview;
+    protected $reset;
     protected $toggle;
     protected $value;
 
@@ -23,6 +24,7 @@ class AccordionField extends FieldClass
         $this->setFieldsets($params['fieldsets'] ?? []);
         $this->setPretty($params['pretty'] ?? false);
         $this->setPreview($params['preview'] ?? null);
+        $this->setReset($params['reset'] ?? false);
         $this->setToggle($params['toggle'] ?? true);
 
         parent::__construct($params);
@@ -79,6 +81,11 @@ class AccordionField extends FieldClass
         return $this->preview;
     }
 
+    public function reset(): bool
+    {
+        return $this->reset;
+    }
+
     public function toggle(): bool
     {
         return $this->toggle;
@@ -90,6 +97,7 @@ class AccordionField extends FieldClass
             'fieldsets' => $this->fieldsets(),
             'pretty' => $this->pretty(),
             'preview' => $this->preview(),
+            'reset' => $this->reset(),
             'toggle' => $this->toggle(),
         ], parent::props());
     }
@@ -122,6 +130,11 @@ class AccordionField extends FieldClass
     protected function setPreview(string $preview = null): void
     {
         $this->preview = $preview;
+    }
+
+    protected function setReset(bool $reset = false): void
+    {
+        $this->reset = $reset;
     }
 
     protected function setToggle(bool $toggle = true): void

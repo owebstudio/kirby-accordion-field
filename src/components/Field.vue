@@ -4,6 +4,16 @@
       class="k-accordion-field"
       v-bind="$props"
   >
+    <template #options>
+      <k-button-group v-if="resetable" class="k-field-options">
+        <k-button
+            icon="undo"
+            text="Reset"
+            class="k-field-options-button"
+            @click="resetForm"
+        />
+      </k-button-group>
+    </template>
     <details
         class="k-accordion-details"
         v-for="(fieldset, key) in fieldsets"
@@ -36,9 +46,9 @@ export default {
   inheritAttrs: false,
   props: {
     default: {
-      type: Array,
+      type: Object,
       default() {
-        return [];
+        return {};
       }
     },
     disabled: Boolean,
@@ -51,6 +61,10 @@ export default {
     name: String,
     label: String,
     preview: String,
+    reset: {
+      type: Boolean,
+      default: false
+    },
     toggle: {
       type: Boolean,
       default: true
@@ -60,6 +74,11 @@ export default {
       default() {
         return {};
       }
+    }
+  },
+  computed: {
+    resetable() {
+      return this.reset === true && this.default && Object.keys(this.default).length > 0;
     }
   },
   methods: {
@@ -94,6 +113,10 @@ export default {
           this.$refs[fieldset.name][0].focus();
         }, 10);
       }
+    },
+    resetForm() {
+      this.value = this.default;
+      this.onInput();
     }
   }
 }

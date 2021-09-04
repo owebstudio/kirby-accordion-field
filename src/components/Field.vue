@@ -35,8 +35,19 @@
 export default {
   inheritAttrs: false,
   props: {
+    default: {
+      type: Array,
+      default() {
+        return [];
+      }
+    },
     disabled: Boolean,
-    fieldsets: Object,
+    fieldsets: {
+      type: Object,
+      default() {
+        return {};
+      }
+    },
     name: String,
     label: String,
     preview: String,

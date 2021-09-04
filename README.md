@@ -129,6 +129,7 @@ The default values of the package are:
 
 | Property | Type | Default| Description |
 |:--- |:---|:---|:---|
+| default | array | [] | Allows assigning default values to fields |
 | fieldesets | array | [] | Allows to define different form fields for each accordion |
 | fieldesets.open | boolean | false | Allows it to be loaded collapsed/expanded by default |
 | fieldesets.headline | string | null | Helps to add extra dynamic headline to each accordion and supports query template. |

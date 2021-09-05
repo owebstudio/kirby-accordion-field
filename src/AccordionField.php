@@ -61,7 +61,7 @@ class AccordionField extends FieldClass
 
             // set default values when initialization form
             if ($value === null) {
-                $defaults = $this->form($fields, $this->default())->data(true);
+                $defaults = $this->form($fields, $this->default() ?? [])->data(true);
                 $this->value = $this->form($fields, $defaults)->values();
             } else {
                 $this->value = $this->form($fields, $this->valueFromJson($value))->values();

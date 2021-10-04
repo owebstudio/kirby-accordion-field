@@ -6,7 +6,7 @@ use Kirby\Data\Data;
 use Kirby\Form\Field\AccordionField;
 
 load([
-    'kirby\\form\\field\\accordionfield' => __DIR__ . '/src/AccordionField.php'
+    'kirby\\form\\field\\accordionfield' => __DIR__ . '/lib/AccordionField.php'
 ]);
 
 Kirby::plugin('clicktonext/kirby-accordion-field', [

@@ -3,7 +3,7 @@
   "description": "Collapses the content below headlines in Panel for Kirby 3",
   "version": "1.2.2",
   "main": "index.js",
-  "author": "Click to Next <support@clicktonext.com> (https://clicktonext)",
+  "author": "Click to Next <support@clicktonext.com> (https://clicktonext.com)",
   "license": "MIT",
   "repository": {
     "type": "git",

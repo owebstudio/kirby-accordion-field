@@ -32,7 +32,20 @@ class AccordionField extends FieldClass
 
     public function default()
     {
-        return array_change_key_case(parent::default() ?? [], CASE_LOWER);
+        $default = [];
+        $fields = $this->fields();
+
+        // get fields default values
+        foreach ($fields as $key => $field) {
+            if (empty($field['default']) === false) {
+                $default[strtolower($key)] = $field['default'];
+            }
+        }
+
+        // merge fields own defaults with accordion default
+        $default = array_replace($default, parent::default() ?? []);
+
+        return array_change_key_case($default, CASE_LOWER);
     }
 
     public function fields(string $fieldset = null): array

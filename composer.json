@@ -11,10 +11,14 @@
     "kirby-plugin",
     "kirby-accordion"
   ],
+  "homepage": "https://clicktonext.com",
+  "support": {
+    "email": "support@clicktonext.com"
+  },
   "authors": [
     {
       "name": "Click to Next",
-      "email": "support@clicktonext.com",
+      "email": "contact@clicktonext.com",
       "homepage": "https://clicktonext.com"
     }
   ],
@@ -24,6 +28,7 @@
     "sort-packages": true
   },
   "require": {
+    "php": "^7.3|^8.0",
     "getkirby/composer-installer": "^1.2"
   },
   "minimum-stability": "dev",

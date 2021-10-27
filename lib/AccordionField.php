@@ -159,7 +159,7 @@ class AccordionField extends FieldClass
         $this->toggle = $toggle;
     }
 
-    public function store($value)
+    public function store($value = null)
     {
         $value = $this->valueToJson($value, $this->pretty());
         return empty($value) == false ? $value : '';

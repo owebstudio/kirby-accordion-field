@@ -16,7 +16,7 @@
     </template>
     <details
         class="k-accordion-details"
-        v-for="(fieldset, key) in fieldsets"
+        v-for="(fieldset, key) in formFields"
         :key="'accordion_' + _uid"
         :open="fieldset.open"
     >
@@ -52,6 +52,7 @@ export default {
       }
     },
     disabled: Boolean,
+    endpoints: Object,
     fieldsets: {
       type: Object,
       default() {
@@ -77,6 +78,26 @@ export default {
     }
   },
   computed: {
+    formFields() {
+      Object.keys(this.fieldsets).forEach(key => {
+        let fieldset = this.fieldsets[key];
+
+        Object.keys(fieldset.fields ?? []).forEach(name => {
+          let field = fieldset.fields[name];
+
+          field.section = this.name;
+          field.endpoints = {
+            field: this.endpoints.field + "+" + name,
+            section: this.endpoints.section,
+            model: this.endpoints.model
+          };
+
+          this.fieldsets[key].fields[name] = field;
+        });
+      });
+
+      return this.fieldsets;
+    },
     resetable() {
       return this.reset === true && this.default && Object.keys(this.default).length > 0;
     }

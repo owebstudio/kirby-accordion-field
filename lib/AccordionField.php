@@ -62,10 +62,10 @@ class AccordionField extends FieldClass
         return $this->fieldsets;
     }
 
-    public function form(array $fields = [], array $input = []): Form
+    public function form(array $fields = null, array $input = []): Form
     {
         return new Form([
-            'fields' => $fields,
+            'fields' => $fields ?? $this->fields(),
             'model' => $this->model(),
             'strict' => true,
             'values' => $input

@@ -161,6 +161,7 @@ class AccordionField extends FieldClass
 
     public function store($value)
     {
+        $value = $this->form($this->fields(), $value)->content();
         $value = $this->valueToJson($value, $this->pretty());
         return empty($value) == false ? $value : '';
     }

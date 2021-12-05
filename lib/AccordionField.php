@@ -3,6 +3,7 @@
 namespace Kirby\Form\Field;
 
 use Kirby\Cms\Blueprint;
+use Kirby\Exception\Exception;
 use Kirby\Exception\InvalidArgumentException;
 use Kirby\Form\FieldClass;
 use Kirby\Form\Form;
@@ -12,6 +13,7 @@ class AccordionField extends FieldClass
 {
     protected $fields = [];
     protected $fieldsets;
+    protected static $forms = [];
     protected $pretty;
     protected $preview;
     protected $reset;
@@ -64,8 +66,20 @@ class AccordionField extends FieldClass
 
     public function form(array $fields = null, array $input = []): Form
     {
-        return new Form([
-            'fields' => $fields ?? $this->fields(),
+        $fields ??= $this->fields();
+
+        // hash fields and input to cache
+        // todo: improve this cache and form instance after core form refactoring
+        $hash = md5(serialize($fields) . serialize($input));
+
+        // check cached form
+        if (isset(static::$forms[$hash]) === true) {
+            return static::$forms[$hash];
+        }
+
+        // cache the form instance
+        return static::$forms[$hash] = new Form([
+            'fields' => $fields,
             'model' => $this->model(),
             'strict' => true,
             'values' => $input

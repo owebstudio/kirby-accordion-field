@@ -44,8 +44,23 @@ class AccordionField extends FieldClass
             }
         }
 
+        // extend default prop
+        if (is_string($this->default) === false) {
+            $defaultProp = $this->default;
+        } else {
+            if ($extend = Blueprint::extend($this->default)) {
+                $defaultProp = $extend;
+            } else {
+                $defaultProp = $this->stringTemplate($this->default);
+            }
+        }
+
+        if (empty($defaultProp) === true || is_array($defaultProp) === false) {
+            $defaultProp = [];
+        }
+
         // merge fields own defaults with accordion default
-        $default = array_replace($default, parent::default() ?? []);
+        $default = array_replace($default, $defaultProp);
 
         return array_change_key_case($default, CASE_LOWER);
     }

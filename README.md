@@ -6,17 +6,9 @@ Kirby accordion field plugin collapses the content below headlines in Panel for 
 
 ## Installation
 
-### Installation with composer
-
-```ssh
-composer require clicktonext/kirby-accordion-field
-```
-
-### Add as git submodule
-
-```ssh
-git submodule add https://github.com/clicktonext/kirby-accordion-field.git site/plugins/kirby-accordion-field
-```
+1. Download the latest release
+2. Unzip downloaded file
+3. Copy/paste unzipped folder in your `/site/plugins` folder
 
 ## Usage
 

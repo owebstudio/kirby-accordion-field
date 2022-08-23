@@ -136,7 +136,7 @@ export default {
       }
     },
     resetForm() {
-      this.value = this.default;
+      this.value = {...this.value ?? {}, ...this.default ?? {}};
       this.onInput();
     }
   }

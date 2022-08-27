@@ -196,4 +196,9 @@ export default {
 .k-accordion-field summary:hover {
   cursor: pointer;
 }
+
+/* fix multiple error lines for a field */
+.k-error-dialog .k-error-details ul > li {
+  white-space: pre-line;
+}
 </style>

@@ -200,18 +200,23 @@ class AccordionField extends FieldClass
         return [
             'accordion' => function ($value) {
                 $errors = [];
-                $fields = $this->form($this->fields(), $value)->fields();
 
-                foreach ($fields as $field) {
-                    $fieldErrors = $field->errors();
+                foreach ($this->fieldsets() as $fieldset) {
+                    $fields = $this->form($fieldset['fields'] ?? [], $value)->fields();
 
-                    if (empty($fieldErrors) === false) {
-                        $errors = array_merge($errors, $fieldErrors);
+                    foreach ($fields as $field) {
+                        $fieldErrors = $field->errors();
+
+                        if (empty($fieldErrors) === false) {
+                            foreach ($fieldErrors as $error) {
+                                $errors[] = $error . ' (' . $fieldset['label'] . ' > ' . $field->label() . ')';
+                            }
+                        }
                     }
                 }
 
                 if (empty($errors) === false) {
-                    throw new InvalidArgumentException(implode(", ", array_values($errors)));
+                    throw new InvalidArgumentException(implode("\n", array_values($errors)));
                 }
 
                 return true;

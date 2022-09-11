@@ -1,26 +1,26 @@
 {
-  "name": "clicktonext/kirby-accordion-field",
+  "name": "kirbynext/kirby-accordion-field",
   "description": "Collapses the content below headlines in Panel for Kirby 3.",
   "type": "kirby-plugin",
-  "version": "1.3.10",
-  "license": "proprietary",
+  "version": "1.3.11",
+  "license": "MIT",
   "keywords": [
     "kirby",
     "kirby-3",
     "kirby3-plugin",
     "kirby-plugin",
-    "clicktonext-plugin",
+    "kirbynext-plugin",
     "kirby-accordion"
   ],
-  "homepage": "https://clicktonext.com",
+  "homepage": "https://kirbynext.com",
   "support": {
-    "email": "support@clicktonext.com"
+    "email": "support@kirbynext.com"
   },
   "authors": [
     {
-      "name": "Click to Next",
-      "email": "contact@clicktonext.com",
-      "homepage": "https://clicktonext.com"
+      "name": "Kirby Next",
+      "email": "contact@kirbynext.com",
+      "homepage": "https://kirbynext.com"
     }
   ],
   "config": {

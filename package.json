@@ -1,13 +1,13 @@
 {
   "name": "kirby-accordion-field",
-  "description": "Collapses the content below headlines in Panel for Kirby 3",
-  "version": "1.3.10",
+  "description": "Collapses the content below headlines in Panel for Kirby 3.",
+  "version": "1.3.11",
   "main": "index.js",
-  "author": "Click to Next <support@clicktonext.com> (https://clicktonext.com)",
-  "license": "proprietary",
+  "author": "Kirby Next <contact@kirbynext.com> (https://kirbynext.com)",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git@github.com:clicktonext/kirby-accordion-field.git"
+    "url": "git@github.com:kirbynext/kirby-accordion-field.git"
   },
   "scripts": {
     "dev": "npx -y kirbyup src/index.js --watch",
@@ -15,8 +15,5 @@
   },
   "posthtml": {
     "recognizeSelfClosing": true
-  },
-  "devDependencies": {
-    "kirbyup": "^2.0.0-beta.0"
   }
 }

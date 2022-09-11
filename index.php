@@ -9,7 +9,7 @@ load([
     'kirby\\form\\field\\accordionfield' => __DIR__ . '/lib/AccordionField.php'
 ]);
 
-Kirby::plugin('clicktonext/kirby-accordion-field', [
+Kirby::plugin('kirbynext/kirby-accordion-field', [
     'fields' => [
         'accordion' => AccordionField::class
     ],

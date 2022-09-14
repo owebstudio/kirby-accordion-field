@@ -1,27 +1,27 @@
 {
-  "name": "kirbynext/kirby-accordion-field",
+  "name": "owebstudio/kirby-accordion-field",
   "description": "Collapses the content below headlines in Panel for Kirby 3.",
   "type": "kirby-plugin",
-  "version": "1.3.11",
+  "version": "1.3.12",
   "license": "MIT",
   "keywords": [
-    "kirbynext",
+    "owebstudio",
+    "owebstudio-plugin",
     "kirby",
     "kirby-3",
     "kirby3-plugin",
     "kirby-plugin",
-    "kirbynext-plugin",
     "kirby-accordion"
   ],
-  "homepage": "https://kirbynext.com",
+  "homepage": "https://owebstudio.com",
   "support": {
-    "email": "support@kirbynext.com"
+    "email": "support@owebstudio.com"
   },
   "authors": [
     {
-      "name": "Kirby Next",
-      "email": "contact@kirbynext.com",
-      "homepage": "https://kirbynext.com"
+      "name": "oweb studio",
+      "email": "contact@owebstudio.com",
+      "homepage": "https://owebstudio.com"
     }
   ],
   "config": {

@@ -9,7 +9,7 @@ load([
     'kirby\\form\\field\\accordionfield' => __DIR__ . '/lib/AccordionField.php'
 ]);
 
-Kirby::plugin('owebstudio/kirby-accordion-field', [
+Kirby::plugin('owebstudio/accordion-field', [
     'fields' => [
         'accordion' => AccordionField::class
     ],

@@ -1,7 +1,7 @@
 <?php
 
 use Kirby\Cms\App as Kirby;
-use Kirby\Cms\Content;
+use Kirby\Content\Content;
 use Kirby\Data\Data;
 use Kirby\Form\Field\AccordionField;
 

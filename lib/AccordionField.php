@@ -2,6 +2,7 @@
 
 namespace Kirby\Form\Field;
 
+use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Blueprint;
 use Kirby\Exception\Exception;
 use Kirby\Exception\InvalidArgumentException;
@@ -11,18 +12,18 @@ use Kirby\Toolkit\I18n;
 
 class AccordionField extends FieldClass
 {
-    protected $fields = [];
-    protected $fieldsets;
-    protected static $forms = [];
-    protected $pretty;
-    protected $preview;
-    protected $reset;
-    protected $toggle;
-    protected $value;
+    protected array        $fields = [];
+    protected array        $fieldsets;
+    protected static array $forms  = [];
+    protected bool         $pretty;
+    protected string|null  $preview;
+    protected bool         $reset;
+    protected bool         $toggle;
+    protected mixed        $value;
 
     public function __construct(array $params = [])
     {
-        $this->setModel($params['model'] ?? site());
+        $this->setModel($params['model'] ?? Kirby::instance()->site());
         $this->setFieldsets($params['fieldsets'] ?? []);
         $this->setPretty($params['pretty'] ?? false);
         $this->setPreview($params['preview'] ?? null);
@@ -32,7 +33,7 @@ class AccordionField extends FieldClass
         parent::__construct($params);
     }
 
-    public function default()
+    public function default(): mixed
     {
         $default = [];
         $fields = $this->fields();
@@ -101,7 +102,7 @@ class AccordionField extends FieldClass
         ]);
     }
 
-    public function fill($value = null)
+    public function fill($value = null): void
     {
         try {
             $fields = $this->fields();
@@ -188,11 +189,11 @@ class AccordionField extends FieldClass
         $this->toggle = $toggle;
     }
 
-    public function store($value)
+    public function store($value): mixed
     {
         $value = $this->form($this->fields(), $value)->content();
         $value = $this->valueToJson($value, $this->pretty());
-        return empty($value) == false ? $value : '';
+        return empty($value) === true ? '' : $value;
     }
 
     public function validations(): array

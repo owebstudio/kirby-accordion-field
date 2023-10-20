@@ -171,7 +171,7 @@ export default {
   font-size: var(--text-sm);
 }
 
-.k-accordion-field details fieldset {
+.k-accordion-field details .k-fieldset {
   padding: 1.5rem 1.5rem 2rem;
   border-left: 1px dashed rgba(#000, .1);
   border-right: 1px dashed rgba(#000, .1);

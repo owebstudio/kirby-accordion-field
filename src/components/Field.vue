@@ -146,7 +146,7 @@ export default {
 <style lang="scss">
 .k-accordion-field details {
   position: relative;
-  border-bottom: 1px dashed rgba(#000, .1);
+  border-bottom: 1px dashed var(--item-color-back);
 }
 
 .k-accordion-field details summary {
@@ -173,8 +173,8 @@ export default {
 
 .k-accordion-field details .k-fieldset {
   padding: 1.5rem 1.5rem 2rem;
-  border-left: 1px dashed rgba(#000, .1);
-  border-right: 1px dashed rgba(#000, .1);
+  border-left: 1px dashed var(--item-color-back);
+  border-right: 1px dashed var(--item-color-back);
 }
 
 @keyframes details-show {
@@ -191,6 +191,10 @@ export default {
 .k-accordion-field summary {
   padding: .75rem;
   background: var(--color-white);
+}
+
+[data-theme="dark"] .k-accordion-field summary {
+  background: var(--item-color-back);
 }
 
 .k-accordion-field summary:hover {

@@ -1,6 +1,6 @@
 # Kirby Accordion Field
 
-Kirby accordion field plugin collapses the content below headlines in Panel for Kirby 4.
+Kirby accordion field plugin collapses the content below headlines in Panel for Kirby.
 
 ![kirby-accordion-field](https://user-images.githubusercontent.com/3393422/131719194-395ec239-d88a-4866-b754-9a023dce02de.png)
 
@@ -16,6 +16,7 @@ Kirby accordion field plugin collapses the content below headlines in Panel for 
 |:--------------|:--------------------------|
 | ^3.0          | ^1.0                      |
 | ^4.0          | ^2.0                      |
+| ^5.0          | ^3.0                      |
 
 ## Usage
 

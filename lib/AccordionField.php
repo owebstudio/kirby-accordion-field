@@ -4,22 +4,23 @@ namespace Kirby\Form\Field;
 
 use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Blueprint;
-use Kirby\Exception\Exception;
+use Kirby\Data\Json;
 use Kirby\Exception\InvalidArgumentException;
 use Kirby\Form\FieldClass;
 use Kirby\Form\Form;
 use Kirby\Toolkit\I18n;
+use Throwable;
 
 class AccordionField extends FieldClass
 {
-    protected array        $fields = [];
-    protected array        $fieldsets;
-    protected static array $forms  = [];
-    protected bool         $pretty;
-    protected string|null  $preview;
-    protected bool         $reset;
-    protected bool         $toggle;
-    protected mixed        $value;
+    protected array $fields = [];
+    protected array $fieldsets;
+    protected static array $forms = [];
+    protected bool $pretty;
+    protected string|null $preview;
+    protected bool $reset;
+    protected bool $toggle;
+    protected mixed $value = [];
 
     public function __construct(array $params = [])
     {
@@ -80,42 +81,30 @@ class AccordionField extends FieldClass
         return $this->fieldsets;
     }
 
-    public function form(array $fields = null, array $input = []): Form
+    public function form(array $fields = null): Form
     {
         $fields ??= $this->fields();
 
         // hash fields and input to cache
         // todo: improve this cache and form instance after core form refactoring
-        $hash = md5(serialize($fields) . serialize($input));
-
-        // check cached form
-        if (isset(static::$forms[$hash]) === true) {
-            return static::$forms[$hash];
-        }
+        $hash = md5(serialize($fields));
 
         // cache the form instance
-        return static::$forms[$hash] = new Form([
-            'fields' => $fields,
-            'model' => $this->model(),
-            'strict' => true,
-            'values' => $input
-        ]);
+        return static::$forms[$hash] ??= new Form(
+            fields: $fields,
+            model: $this->model()
+        );
     }
 
-    public function fill($value = null): void
+    public function fill(mixed $value): static
     {
         try {
-            $fields = $this->fields();
-
-            // set default values when initialization form
-            if ($value === null) {
-                $this->value = $this->form($fields, $this->default())->values();
-            } else {
-                $this->value = $this->form($fields, $this->valueFromJson($value))->values();
-            }
-        } catch (Exception $e) {
+            $this->value = $value === null ? $this->default() : Json::decode($value);
+        } catch (Throwable) {
             $this->value = [];
         }
+
+        return $this;
     }
 
     public function pretty(): bool
@@ -157,7 +146,7 @@ class AccordionField extends FieldClass
             // extends fieldsets and fields
             $fields = Blueprint::fieldsProps($fieldset['fields'] ?? []);
             $this->fields = array_replace_recursive($this->fields, $fields);
-            $fields = $this->form($fields, $this->value ?? [])->fields();
+            $fields = $this->form($fields)->fields();
 
             $fieldset['name'] = $key;
             $fieldset['label'] = I18n::translate($fieldset['label'], $fieldset['label']);
@@ -189,11 +178,19 @@ class AccordionField extends FieldClass
         $this->toggle = $toggle;
     }
 
-    public function store($value): mixed
+    public function toFormValue(): mixed
     {
-        $value = $this->form($this->fields(), $value)->content();
-        $value = $this->valueToJson($value, $this->pretty());
-        return empty($value) === true ? '' : $value;
+        return $this
+            ->form()
+            ->reset()
+            ->fill(input: parent::toFormValue() ?? [])
+            ->fields()
+            ->toFormValues();
+    }
+
+    public function toStoredValue(): mixed
+    {
+        return Json::encode(parent::toStoredValue(), $this->pretty());
     }
 
     public function validations(): array
@@ -203,7 +200,7 @@ class AccordionField extends FieldClass
                 $errors = [];
 
                 foreach ($this->fieldsets() as $fieldset) {
-                    $fields = $this->form($fieldset['fields'] ?? [], $value)->fields();
+                    $fields = $this->form($fieldset['fields'] ?? [])->fields()->reset()->fill(input: $value);
 
                     foreach ($fields as $field) {
                         $fieldErrors = $field->errors();

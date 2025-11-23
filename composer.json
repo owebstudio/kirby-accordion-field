@@ -1,13 +1,11 @@
 {
   "name": "owebstudio/kirby-accordion-field",
-  "description": "Collapses the content below headlines in Panel for Kirby 4.",
+  "description": "Collapses the content below headlines in Panel for Kirby.",
   "type": "kirby-plugin",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "license": "proprietary",
   "keywords": [
     "kirby",
-    "kirby-4",
-    "kirby4-plugin",
     "kirby-plugin",
     "owebstudio-plugin",
     "kirby-accordion"
@@ -32,7 +30,7 @@
     }
   },
   "require": {
-    "php": "^8.1",
+    "php": "^8.2",
     "getkirby/composer-installer": "^1.2"
   },
   "extra": {

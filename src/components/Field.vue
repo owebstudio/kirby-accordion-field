@@ -33,9 +33,10 @@
           :fields="fieldset.fields"
           :novalidate="false"
           :validate="true"
-          v-model="value"
+          :value="value"
           v-on="$listeners"
           @input="onInput"
+          @submit="onSubmit"
       />
     </details>
   </k-field>
@@ -105,6 +106,9 @@ export default {
   methods: {
     onInput() {
       this.$emit("input", this.value);
+    },
+    onSubmit() {
+      this.$emit("submit", this.value);
     },
     headlineFieldset(fieldset) {
       const headline = this.$helper.string.template(fieldset.headline, this.value);

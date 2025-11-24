@@ -8,6 +8,7 @@ use Kirby\Data\Json;
 use Kirby\Exception\InvalidArgumentException;
 use Kirby\Form\FieldClass;
 use Kirby\Form\Form;
+use Kirby\Toolkit\A;
 use Kirby\Toolkit\I18n;
 use Throwable;
 
@@ -190,7 +191,13 @@ class AccordionField extends FieldClass
 
     public function toStoredValue(): mixed
     {
-        return Json::encode(parent::toStoredValue(), $this->pretty());
+        $value = $this
+            ->form()
+            ->reset()
+            ->submit(input: parent::toStoredValue())
+            ->toStoredValues();
+
+        return Json::encode($value, pretty: $this->pretty());
     }
 
     public function validations(): array

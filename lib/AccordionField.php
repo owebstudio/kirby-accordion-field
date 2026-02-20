@@ -118,7 +118,7 @@ class AccordionField extends FieldClass
         return $this->preview;
     }
 
-    public function reset(): bool
+    public function getReset(): bool
     {
         return $this->reset;
     }
@@ -134,7 +134,7 @@ class AccordionField extends FieldClass
             'fieldsets' => $this->fieldsets(),
             'pretty' => $this->pretty(),
             'preview' => $this->preview(),
-            'reset' => $this->reset(),
+            'reset' => $this->getReset(),
             'toggle' => $this->toggle(),
         ], parent::props());
     }

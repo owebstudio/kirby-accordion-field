@@ -68,7 +68,7 @@ class AccordionField extends FieldClass
         return array_change_key_case($default, CASE_LOWER);
     }
 
-    public function fields(string $fieldset = null): array
+    public function fields(string|null $fieldset = null): array
     {
         if (empty($fieldset) === false) {
             return $this->fieldsets[$fieldset]['fields'] ?? [];
@@ -82,7 +82,7 @@ class AccordionField extends FieldClass
         return $this->fieldsets;
     }
 
-    public function form(array $fields = null): Form
+    public function form(array|null $fields = null): Form
     {
         $fields ??= $this->fields();
 
@@ -164,7 +164,7 @@ class AccordionField extends FieldClass
         $this->pretty = $pretty;
     }
 
-    protected function setPreview(string $preview = null): void
+    protected function setPreview(string|null $preview = null): void
     {
         $this->preview = $preview;
     }

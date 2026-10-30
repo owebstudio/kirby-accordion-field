@@ -16,7 +16,7 @@ class AccordionField extends FieldClass
 {
     protected array $fields = [];
     protected array $fieldsets;
-    protected static array $forms = [];
+    protected array $forms = [];
     protected bool $pretty;
     protected string|null $preview;
     protected bool $reset;
@@ -90,8 +90,8 @@ class AccordionField extends FieldClass
         // todo: improve this cache and form instance after core form refactoring
         $hash = md5(serialize($fields));
 
-        // cache the form instance
-        return static::$forms[$hash] ??= new Form(
+        // cache the form instance per field, so that each model gets its own form
+        return $this->forms[$hash] ??= new Form(
             fields: $fields,
             model: $this->model()
         );

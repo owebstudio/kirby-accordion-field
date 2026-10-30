@@ -9,8 +9,11 @@
     "url": "git@github.com:owebstudio/kirby-accordion-field.git"
   },
   "scripts": {
-    "dev": "npx -y kirbyup src/index.js --watch",
-    "build": "npx -y kirbyup src/index.js"
+    "dev": "kirbyup src/index.js --watch",
+    "build": "kirbyup src/index.js"
+  },
+  "devDependencies": {
+    "kirbyup": "3.5.0"
   },
   "posthtml": {
     "recognizeSelfClosing": true

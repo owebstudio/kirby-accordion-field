@@ -7,8 +7,6 @@
   "keywords": [
     "kirby",
     "kirby-plugin",
-    "kirby3",
-    "kirby4",
     "kirby5",
     "owebstudio-plugin",
     "kirby-accordion"
@@ -45,6 +43,5 @@
       "compatible": "^5.0"
     }
   },
-  "minimum-stability": "dev",
   "prefer-stable": true
 }

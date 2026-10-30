@@ -1,3 +1,5 @@
+![Accordion Field, a Kirby plugin by oweb studio. Group fields into collapsible sections in the Panel.](.github/cover.png)
+
 # Kirby Accordion Field
 
 Kirby accordion field plugin collapses the content below headlines in Panel for Kirby.

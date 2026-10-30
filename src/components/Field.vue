@@ -14,6 +14,21 @@
         />
       </k-button-group>
     </template>
+    <k-box
+        v-if="isLocked"
+        :theme="license.theme"
+        class="k-accordion-license"
+    >
+      <k-text>{{ license.message }}</k-text>
+      <k-button
+          v-if="license.dialog"
+          :dialog="license.dialog"
+          icon="key"
+          size="sm"
+      >
+        {{ license.button }}
+      </k-button>
+    </k-box>
     <details
         class="k-accordion-details"
         v-for="(fieldset, key) in formFields"
@@ -30,6 +45,7 @@
       <k-fieldset
           :ref="fieldset.name"
           :key="'fieldset_' + _uid"
+          :disabled="isDisabled"
           :fields="fieldset.fields"
           :novalidate="false"
           :validate="true"
@@ -62,6 +78,12 @@ export default {
     },
     name: String,
     label: String,
+    license: {
+      type: Object,
+      default() {
+        return {};
+      }
+    },
     preview: String,
     reset: {
       type: Boolean,
@@ -99,8 +121,14 @@ export default {
 
       return this.fieldsets;
     },
+    isDisabled() {
+      return this.disabled === true || this.isLocked === true;
+    },
+    isLocked() {
+      return this.license?.locked === true;
+    },
     resetable() {
-      return this.reset === true && this.default && Object.keys(this.default).length > 0;
+      return this.reset === true && this.isDisabled === false && this.default && Object.keys(this.default).length > 0;
     }
   },
   methods: {
@@ -154,6 +182,11 @@ export default {
 </script>
 
 <style lang="scss">
+.k-accordion-license {
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-3);
+}
+
 .k-accordion-field details {
   position: relative;
   border-bottom: 1px dashed var(--item-color-back);

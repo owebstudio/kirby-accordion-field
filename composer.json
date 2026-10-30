@@ -40,7 +40,10 @@
     "owebstudio/kirby-license": "^1.0"
   },
   "extra": {
-    "installer-name": "kirby-accordion-field"
+    "installer-name": "kirby-accordion-field",
+    "kirby": {
+      "compatible": "^5.0"
+    }
   },
   "minimum-stability": "dev",
   "prefer-stable": true

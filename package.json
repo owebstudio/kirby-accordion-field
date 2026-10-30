@@ -3,7 +3,7 @@
   "description": "Collapses the content below headlines in Panel for Kirby 4.",
   "main": "index.js",
   "author": "oweb studio <contact@owebstudio.com> (https://owebstudio.com)",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "repository": {
     "type": "git",
     "url": "git@github.com:owebstudio/kirby-accordion-field.git"

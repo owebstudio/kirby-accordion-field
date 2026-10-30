@@ -143,3 +143,11 @@ The default values of the package are:
 | preview             | string  | null    | Provides preview output for structure field and supports query template            |
 | reset               | boolean | false   | Restores the default values to the form if `default` prop is filled                |
 | toggle              | boolean | true    | Allows only one accordion to remain open when enabled                              |
+
+## License
+
+Accordion Field is a commercial plugin. Live sites need a license key. Local and staging sites (for example `localhost`, `*.test` or a `staging.` subdomain) work without a key, so you can try the plugin before you buy it.
+
+[Buy a license](https://owebstudio.com/kirby/plugins/accordion-field) and activate the key in the Panel: click the plugin's license status in the System view (Kirby 5) or the button in the field's notice. Without a key, the field shows a notice and can't be edited on the live site. Your content and your website keep working.
+
+Licensed under the [oweb studio Commercial License](https://owebstudio.com/license), see [LICENSE.md](LICENSE.md).

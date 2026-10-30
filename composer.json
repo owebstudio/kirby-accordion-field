@@ -2,13 +2,11 @@
   "name": "owebstudio/kirby-accordion-field",
   "description": "Collapses the content below headlines in Panel for Kirby.",
   "type": "kirby-plugin",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "license": "proprietary",
   "keywords": [
     "kirby",
     "kirby-plugin",
-    "kirby3",
-    "kirby4",
     "kirby5",
     "owebstudio-plugin",
     "kirby-accordion"
@@ -40,8 +38,10 @@
     "owebstudio/kirby-license": "^1.0"
   },
   "extra": {
-    "installer-name": "kirby-accordion-field"
+    "installer-name": "kirby-accordion-field",
+    "kirby": {
+      "compatible": "^5.0"
+    }
   },
-  "minimum-stability": "dev",
   "prefer-stable": true
 }

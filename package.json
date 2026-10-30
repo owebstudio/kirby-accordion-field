@@ -1,6 +1,6 @@
 {
   "name": "kirby-accordion-field",
-  "description": "Collapses the content below headlines in Panel for Kirby 4.",
+  "description": "Collapses the content below headlines in Panel for Kirby.",
   "main": "index.js",
   "author": "oweb studio <contact@owebstudio.com> (https://owebstudio.com)",
   "license": "SEE LICENSE IN LICENSE.md",

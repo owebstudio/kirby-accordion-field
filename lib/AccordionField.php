@@ -10,6 +10,7 @@ use Kirby\Form\FieldClass;
 use Kirby\Form\Form;
 use Kirby\Toolkit\A;
 use Kirby\Toolkit\I18n;
+use Oweb\AccordionField\License\License;
 use Throwable;
 
 class AccordionField extends FieldClass
@@ -97,6 +98,17 @@ class AccordionField extends FieldClass
         );
     }
 
+    public function errors(): array
+    {
+        // the field can't be edited without a license,
+        // so its value must not block saving the page
+        if ($this->isLocked() === true) {
+            return [];
+        }
+
+        return parent::errors();
+    }
+
     public function fill(mixed $value): static
     {
         try {
@@ -106,6 +118,16 @@ class AccordionField extends FieldClass
         }
 
         return $this;
+    }
+
+    public function isLocked(): bool
+    {
+        return $this->license()?->isLocked() === true;
+    }
+
+    public function license(): License|null
+    {
+        return License::for('owebstudio/accordion-field');
     }
 
     public function pretty(): bool
@@ -132,6 +154,7 @@ class AccordionField extends FieldClass
     {
         return array_merge([
             'fieldsets' => $this->fieldsets(),
+            'license' => $this->license()?->panel(),
             'pretty' => $this->pretty(),
             'preview' => $this->preview(),
             'reset' => $this->getReset(),
@@ -177,6 +200,16 @@ class AccordionField extends FieldClass
     protected function setToggle(bool $toggle = true): void
     {
         $this->toggle = $toggle;
+    }
+
+    public function submit(mixed $value): static
+    {
+        // keep the stored value while the license is locked
+        if ($this->isLocked() === true) {
+            return $this;
+        }
+
+        return parent::submit($value);
     }
 
     public function toFormValue(): mixed

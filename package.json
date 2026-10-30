@@ -2,7 +2,7 @@
   "name": "kirby-accordion-field",
   "description": "Collapses the content below headlines in Panel for Kirby.",
   "main": "index.js",
-  "author": "oweb studio <contact@owebstudio.com> (https://owebstudio.com)",
+  "author": "oweb studio <contact@owebstudio.com> (https://github.com/owebstudio)",
   "license": "MIT",
   "repository": {
     "type": "git",

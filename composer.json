@@ -34,9 +34,6 @@
     "php": "^8.2",
     "getkirby/composer-installer": "^1.2"
   },
-  "require-dev": {
-    "owebstudio/kirby-license": "^1.0"
-  },
   "extra": {
     "installer-name": "kirby-accordion-field",
     "kirby": {

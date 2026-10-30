@@ -25,7 +25,7 @@
           @click="toggleFieldset(fieldset)"
       >
         <span v-html="fieldset.label" class="k-accordion-label"/>
-        <span v-html="headlineFieldset(fieldset)" v-if="fieldset.headline" class="k-accordion-headline"/>
+        <span v-if="fieldset.headline" class="k-accordion-headline">{{ headlineFieldset(fieldset) }}</span>
       </summary>
       <k-fieldset
           :ref="fieldset.name"
@@ -112,7 +112,13 @@ export default {
     },
     headlineFieldset(fieldset) {
       const headline = this.$helper.string.template(fieldset.headline, this.value);
-      return headline === "…" ? false : headline;
+
+      if (headline === "…") {
+        return "";
+      }
+
+      // values are inserted unescaped, so render them as plain text
+      return this.$helper.string.unescapeHTML(this.$helper.string.stripHTML(headline));
     },
     toggleFieldset(fieldset) {
       if (fieldset.open === false) {

@@ -3,10 +3,10 @@
 use Kirby\Cms\App as Kirby;
 use Kirby\Content\Content;
 use Kirby\Data\Data;
-use Kirby\Form\Field\AccordionField;
+use Oweb\AccordionField\AccordionField;
 
 load([
-    'kirby\\form\\field\\accordionfield' => __DIR__ . '/lib/AccordionField.php'
+    'oweb\\accordionfield\\accordionfield' => __DIR__ . '/lib/AccordionField.php'
 ]);
 
 Kirby::plugin('owebstudio/accordion-field', [

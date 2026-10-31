@@ -1,20 +1,10 @@
-<template>
-  <div class="k-accordion-field-preview">
-    <p class="k-structure-table-text">
-      {{ preview }}
-    </p>
-  </div>
-</template>
-
 <script>
 export default {
-  props: {
-    field: Object,
-    value: Object
-  },
+  extends: "k-text-field-preview",
+  class: "k-accordion-field-preview",
   computed: {
-    preview() {
-      if (this.field.preview) {
+    text() {
+      if (this.field?.preview) {
         return this.$helper.string.template(this.field.preview, this.value);
       }
 

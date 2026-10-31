@@ -18,6 +18,7 @@
     <details
         v-for="fieldset in items"
         :key="fieldset.name"
+        :data-name="fieldset.name"
         :open="isOpen(fieldset.name)"
         class="k-accordion-details"
         @toggle="onToggle(fieldset.name, $event)"
@@ -29,6 +30,7 @@
         <k-icon v-if="fieldset.icon" :type="fieldset.icon" class="k-accordion-icon"/>
         <span class="k-accordion-label">{{ fieldset.label }}</span>
         <span v-if="fieldset.headline" class="k-accordion-headline">{{ headlineFieldset(fieldset) }}</span>
+        <k-icon type="alert" class="k-accordion-invalid"/>
       </summary>
       <k-fieldset
           :ref="fieldset.name"
@@ -113,6 +115,12 @@ export default {
         this.object = {...value ?? {}};
       },
       immediate: true
+    },
+    "$panel.dialog.component"(component) {
+      // open fieldsets with errors when saving fails
+      if (component === "k-validation-error-dialog") {
+        this.openInvalid(this.$panel.dialog.props?.fields?.[this.name]);
+      }
     }
   },
   methods: {
@@ -141,6 +149,17 @@ export default {
     },
     isOpen(name) {
       return this.open[name] ?? this.fieldsets[name]?.open === true;
+    },
+    openInvalid(error) {
+      const message = Object.values(error?.message ?? {}).join("\n");
+
+      for (const fieldset of this.items) {
+        const details = this.$el.querySelector(`:scope > .k-accordion-details[data-name="${CSS.escape(fieldset.name)}"]`);
+
+        if (details?.matches(":has(:invalid)") || message.includes("(" + fieldset.label + " > ")) {
+          this.setOpen(fieldset.name, true);
+        }
+      }
     },
     resetForm() {
       this.$emit("input", {...this.object, ...this.default});
@@ -223,6 +242,16 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: var(--text-sm);
+}
+
+.k-accordion-invalid {
+  display: none;
+  float: inline-end;
+  color: var(--color-red-600);
+}
+
+.k-accordion-details:has(:invalid) > summary .k-accordion-invalid {
+  display: inline-flex;
 }
 
 .k-accordion-field details .k-fieldset {

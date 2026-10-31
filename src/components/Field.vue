@@ -1,41 +1,51 @@
 <template>
   <k-field
-      :input="_uid"
-      class="k-accordion-field"
       v-bind="$props"
+      :input="id"
+      class="k-accordion-field"
   >
-    <template #options>
-      <k-button-group v-if="resetable" class="k-field-options">
+    <template v-if="resetable || items.length > 1" #options>
+      <k-button-group layout="collapsed">
         <k-button
+            v-if="resetable"
             icon="undo"
             text="Reset"
-            class="k-field-options-button"
+            size="xs"
+            variant="filled"
             @click="resetForm"
+        />
+        <k-button
+            v-if="items.length > 1"
+            :icon="isAllOpen ? 'collapse' : 'expand'"
+            :title="$t(isAllOpen ? 'collapse.all' : 'expand.all')"
+            size="xs"
+            variant="filled"
+            @click="toggleAll"
         />
       </k-button-group>
     </template>
     <details
+        v-for="fieldset in items"
+        :key="fieldset.name"
+        :data-name="fieldset.name"
+        :open="isOpen(fieldset.name)"
         class="k-accordion-details"
-        v-for="(fieldset, key) in formFields"
-        :key="'accordion_' + _uid"
-        :open="fieldset.open"
+        @toggle="onToggle(fieldset.name, $event)"
     >
       <summary
           class="k-accordion-summary"
-          @click="toggleFieldset(fieldset)"
+          @click.prevent="toggleFieldset(fieldset.name)"
       >
-        <span v-html="fieldset.label" class="k-accordion-label"/>
+        <k-icon v-if="fieldset.icon" :type="fieldset.icon" class="k-accordion-icon"/>
+        <span class="k-accordion-label">{{ fieldset.label }}</span>
         <span v-if="fieldset.headline" class="k-accordion-headline">{{ headlineFieldset(fieldset) }}</span>
+        <k-icon type="alert" class="k-accordion-invalid"/>
       </summary>
       <k-fieldset
           :ref="fieldset.name"
-          :key="'fieldset_' + _uid"
           :disabled="disabled"
           :fields="fieldset.fields"
-          :novalidate="false"
-          :validate="true"
-          :value="value"
-          v-on="$listeners"
+          :value="object"
           @input="onInput"
           @submit="onSubmit"
       />
@@ -44,11 +54,13 @@
 </template>
 
 <script>
+import { useId } from "vue";
+
 export default {
   inheritAttrs: false,
   props: {
     default: {
-      type: Object,
+      type: [Object, Array],
       default() {
         return {};
       }
@@ -56,14 +68,21 @@ export default {
     disabled: Boolean,
     endpoints: Object,
     fieldsets: {
-      type: Object,
+      type: [Object, Array],
       default() {
         return {};
       }
     },
-    name: String,
+    hasDiff: Boolean,
+    help: String,
+    id: {
+      type: [Number, String],
+      default: () => useId()
+    },
     label: String,
+    name: String,
     preview: String,
+    required: Boolean,
     reset: {
       type: Boolean,
       default: false
@@ -72,47 +91,76 @@ export default {
       type: Boolean,
       default: true
     },
+    translate: Boolean,
+    type: String,
     value: {
-      type: Object,
+      type: [Object, Array],
       default() {
         return {};
       }
     }
   },
+  emits: ["input", "submit"],
+  data() {
+    return {
+      object: {},
+      open: {}
+    };
+  },
   computed: {
-    formFields() {
-      Object.keys(this.fieldsets).forEach(key => {
-        let fieldset = this.fieldsets[key];
-
-        Object.keys(fieldset.fields ?? []).forEach(name => {
-          let field = fieldset.fields[name];
-
-          field.section = this.name;
-          field.endpoints = {
-            field: this.endpoints.field + "+" + name,
-            section: this.endpoints.section,
-            model: this.endpoints.model
-          };
-
-          this.fieldsets[key].fields[name] = field;
-        });
-      });
-
-      return this.fieldsets;
+    isAllOpen() {
+      return this.items.every(fieldset => this.isOpen(fieldset.name));
+    },
+    items() {
+      return Object.values(this.fieldsets).map(fieldset => ({
+        ...fieldset,
+        fields: this.subfields(fieldset.fields)
+      }));
     },
     resetable() {
-      return this.reset === true && this.disabled === false && this.default && Object.keys(this.default).length > 0;
+      return this.reset === true && this.disabled === false && this.$helper.object.length(this.default) > 0;
+    },
+    storageKey() {
+      if (this.endpoints?.field) {
+        return "kirby.accordion." + this.endpoints.field;
+      }
+
+      return null;
+    }
+  },
+  created() {
+    this.open = this.restore() ?? {};
+  },
+  watch: {
+    value: {
+      handler(value) {
+        this.object = {...value ?? {}};
+      },
+      immediate: true
+    },
+    "$panel.dialog.component"(component) {
+      // open fieldsets with errors when saving fails
+      if (component === "k-validation-error-dialog") {
+        this.openInvalid(this.$panel.dialog.props?.fields?.[this.name]);
+      }
     }
   },
   methods: {
-    onInput() {
-      this.$emit("input", this.value);
+    onInput(value) {
+      this.$emit("input", {...value});
     },
-    onSubmit() {
-      this.$emit("submit", this.value);
+    onSubmit(event) {
+      this.$emit("submit", event);
+    },
+    onToggle(name, event) {
+      // keep the state in sync when the browser opens a fieldset,
+      // e.g. for a match of the page search
+      if (event.target.open !== this.isOpen(name)) {
+        this.setOpen(name, event.target.open);
+      }
     },
     headlineFieldset(fieldset) {
-      const headline = this.$helper.string.template(fieldset.headline, this.value);
+      const headline = this.$helper.string.template(fieldset.headline, this.object);
 
       if (headline === "…") {
         return "";
@@ -121,47 +169,98 @@ export default {
       // values are inserted unescaped, so render them as plain text
       return this.$helper.string.unescapeHTML(this.$helper.string.stripHTML(headline));
     },
-    toggleFieldset(fieldset) {
-      if (fieldset.open === false) {
-        if (this.toggle === true) {
-          const details = this.$el.querySelectorAll(".k-accordion-field details");
+    isOpen(name) {
+      return this.open[name] ?? this.fieldsets[name]?.open === true;
+    },
+    openInvalid(error) {
+      const message = Object.values(error?.message ?? {}).join("\n");
 
-          details.forEach((target) => {
-            target.addEventListener("toggle", () => {
-              if (target.open === true) {
-                details.forEach(detail => {
-                  // close other fieldsets
-                  if (target !== detail && detail.open) detail.open = false
-                });
-              }
-            });
-          });
+      for (const fieldset of this.items) {
+        const details = this.$el.querySelector(`:scope > .k-accordion-details[data-name="${CSS.escape(fieldset.name)}"]`);
+
+        if (details?.matches(":has(:invalid)") || message.includes("(" + fieldset.label + " > ")) {
+          this.setOpen(fieldset.name, true);
         }
-      }
-
-      // focus first field
-      if (this.$refs[fieldset.name]) {
-        setTimeout(() => {
-          this.$refs[fieldset.name][0].focus();
-        }, 10);
       }
     },
     resetForm() {
-      this.value = {...this.value ?? {}, ...this.default ?? {}};
-      this.onInput();
+      this.$emit("input", {...this.object, ...this.default});
+    },
+    restore() {
+      try {
+        return JSON.parse(localStorage.getItem(this.storageKey));
+      } catch {
+        return null;
+      }
+    },
+    setOpen(name, open) {
+      this.open[name] = open;
+
+      try {
+        if (this.storageKey) {
+          localStorage.setItem(this.storageKey, JSON.stringify(this.open));
+        }
+      } catch {
+        // the state is only remembered when the storage is available
+      }
+    },
+    subfields(fields) {
+      const subfields = {};
+
+      for (const name in fields) {
+        subfields[name] = {...fields[name]};
+
+        if (this.endpoints) {
+          subfields[name].endpoints = {
+            field: this.endpoints.field + "+" + name,
+            model: this.endpoints.model
+          };
+        }
+      }
+
+      return subfields;
+    },
+    toggleAll() {
+      const open = this.isAllOpen === false;
+
+      for (const fieldset of this.items) {
+        this.setOpen(fieldset.name, open);
+      }
+    },
+    toggleFieldset(name) {
+      const open = this.isOpen(name) === false;
+
+      // close other fieldsets
+      if (open === true && this.toggle === true) {
+        for (const fieldset of this.items) {
+          if (fieldset.name !== name && this.isOpen(fieldset.name)) {
+            this.setOpen(fieldset.name, false);
+          }
+        }
+      }
+
+      this.setOpen(name, open);
+
+      // focus first field
+      if (open === true) {
+        this.$nextTick(() => {
+          const fieldset = this.$refs[name];
+          (Array.isArray(fieldset) ? fieldset[0] : fieldset)?.focus();
+        });
+      }
     }
   }
 }
 </script>
 
-<style lang="scss">
+<style>
 .k-accordion-field details {
   position: relative;
   border-bottom: 1px dashed var(--item-color-back);
 }
 
 .k-accordion-field details summary {
-  --size: var(--text-base);
+  --size: var(--text-md);
   font-size: var(--size);
   font-weight: var(--font-bold);
   line-height: 1.5em;
@@ -170,16 +269,33 @@ export default {
   padding-inline-end: .75rem;
 }
 
+.k-accordion-icon {
+  display: inline-flex;
+  vertical-align: middle;
+  margin-inline-end: .5rem;
+  color: var(--color-text-dimmed);
+}
+
 .k-accordion-label {
   margin-inline-end: .5rem;
 }
 
 .k-accordion-headline {
-  color: var(--color-gray-600);
+  color: var(--color-text-dimmed);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: var(--text-sm);
+}
+
+.k-accordion-invalid {
+  display: none;
+  float: inline-end;
+  color: var(--color-red-600);
+}
+
+.k-accordion-details:has(:invalid) > summary .k-accordion-invalid {
+  display: inline-flex;
 }
 
 .k-accordion-field details .k-fieldset {
@@ -201,19 +317,10 @@ export default {
 
 .k-accordion-field summary {
   padding: .75rem;
-  background: var(--color-white);
-}
-
-[data-theme="dark"] .k-accordion-field summary {
   background: var(--item-color-back);
 }
 
 .k-accordion-field summary:hover {
   cursor: pointer;
-}
-
-/* fix multiple error lines for a field */
-.k-error-dialog .k-error-details ul > li {
-  white-space: pre-line;
 }
 </style>

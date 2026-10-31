@@ -1,51 +1,43 @@
 <?php
 
-namespace Kirby\Form\Field;
+namespace Oweb\AccordionField;
 
-use Kirby\Cms\App as Kirby;
-use Kirby\Cms\Blueprint;
+use Kirby\Blueprint\Blueprint;
 use Kirby\Data\Json;
-use Kirby\Exception\InvalidArgumentException;
-use Kirby\Form\FieldClass;
+use Kirby\Form\Field\InputField;
 use Kirby\Form\Form;
-use Kirby\Toolkit\A;
+use Kirby\Form\Interface\ProvidesNestedForm;
+use Kirby\Form\Mixin;
+use Kirby\Reflection\Attributes\Prop;
 use Kirby\Toolkit\I18n;
+use Kirby\Toolkit\Str;
 use Throwable;
 
-class AccordionField extends FieldClass
+class AccordionField extends InputField implements ProvidesNestedForm
 {
-    protected array $fields = [];
-    protected array $fieldsets;
-    protected array $forms = [];
-    protected bool $pretty;
-    protected string|null $preview;
-    protected bool $reset;
-    protected bool $toggle;
-    protected mixed $value = [];
+    use Mixin\Pretty;
 
-    public function __construct(array $params = [])
-    {
-        $this->setModel($params['model'] ?? Kirby::instance()->site());
-        $this->setFieldsets($params['fieldsets'] ?? []);
-        $this->setPretty($params['pretty'] ?? false);
-        $this->setPreview($params['preview'] ?? null);
-        $this->setReset($params['reset'] ?? false);
-        $this->setToggle($params['toggle'] ?? true);
+    #[Prop]
+    protected array $fieldsets = [];
 
-        parent::__construct($params);
-    }
+    #[Prop]
+    protected string|null $preview = null;
+
+    #[Prop(getter: 'getReset')]
+    protected bool $reset = false;
+
+    #[Prop]
+    protected bool $toggle = true;
+
+    protected array $value = [];
+    protected Form|null $form = null;
 
     public function default(): mixed
     {
-        $default = [];
-        $fields = $this->fields();
-
-        // get fields default values
-        foreach ($fields as $key => $field) {
-            if (empty($field['default']) === false) {
-                $default[strtolower($key)] = $field['default'];
-            }
-        }
+        $default = array_filter(
+            $this->form()->defaults(),
+            fn ($value) => parent::isEmptyValue($value) === false
+        );
 
         // extend default prop
         if (is_string($this->default) === false) {
@@ -68,54 +60,71 @@ class AccordionField extends FieldClass
         return array_change_key_case($default, CASE_LOWER);
     }
 
-    public function fields(string|null $fieldset = null): array
+    public function fields(): array
     {
-        if (empty($fieldset) === false) {
-            return $this->fieldsets[$fieldset]['fields'] ?? [];
+        $fields = [];
+
+        foreach ($this->fieldsets as $fieldset) {
+            $fieldset = Blueprint::extend($fieldset);
+            $fields   = array_replace_recursive($fields, Blueprint::fieldsProps($fieldset['fields'] ?? []));
         }
 
-        return $this->fields;
+        return $fields;
     }
 
     public function fieldsets(): array
     {
-        return $this->fieldsets;
+        $fieldsets = [];
+        $props     = $this->form()->fields()->toProps(defaults: true);
+
+        foreach ($this->fieldsets as $name => $fieldset) {
+            $fieldset = Blueprint::extend($fieldset);
+            $fields   = [];
+
+            foreach (Blueprint::fieldsProps($fieldset['fields'] ?? []) as $key => $field) {
+                $key = strtolower($key);
+
+                if (isset($props[$key]) === true) {
+                    $fields[$key] = $props[$key];
+                }
+            }
+
+            $label = $fieldset['label'] ?? Str::label($name);
+
+            $fieldsets[$name] = [
+                ...$fieldset,
+                'name'     => $name,
+                'label'    => I18n::translate($label, $label),
+                'fields'   => $fields,
+                'headline' => $fieldset['headline'] ?? null,
+                'icon'     => $fieldset['icon'] ?? null,
+                'open'     => $fieldset['open'] ?? false,
+            ];
+        }
+
+        return $fieldsets;
     }
 
-    public function form(array|null $fields = null): Form
+    public function form(): Form
     {
-        $fields ??= $this->fields();
-
-        // hash fields and input to cache
-        // todo: improve this cache and form instance after core form refactoring
-        $hash = md5(serialize($fields));
-
-        // cache the form instance per field, so that each model gets its own form
-        return $this->forms[$hash] ??= new Form(
-            fields: $fields,
-            model: $this->model()
+        $this->form ??= new Form(
+            fields: $this->fields(),
+            model: $this->model(),
+            language: 'current'
         );
+
+        return $this->form->reset();
     }
 
     public function fill(mixed $value): static
     {
         try {
-            $this->value = $value === null ? $this->default() : Json::decode($value);
+            $value = Json::decode($value);
         } catch (Throwable) {
-            $this->value = [];
+            $value = [];
         }
 
-        return $this;
-    }
-
-    public function pretty(): bool
-    {
-        return $this->pretty;
-    }
-
-    public function preview(): ?string
-    {
-        return $this->preview;
+        return parent::fill($value);
     }
 
     public function getReset(): bool
@@ -123,109 +132,86 @@ class AccordionField extends FieldClass
         return $this->reset;
     }
 
+    public function isEmpty(): bool
+    {
+        return $this->isEmptyValue($this->value);
+    }
+
+    public function isEmptyValue(mixed $value = null): bool
+    {
+        if (is_array($value) === true) {
+            $value = array_filter(
+                $value,
+                fn ($item) => parent::isEmptyValue($item) === false
+            );
+        }
+
+        return parent::isEmptyValue($value);
+    }
+
+    public function preview(): string|null
+    {
+        return $this->preview;
+    }
+
+    public function props(): array
+    {
+        return [
+            ...parent::props(),
+            'default' => $this->default(),
+        ];
+    }
+
     public function toggle(): bool
     {
         return $this->toggle;
     }
 
-    public function props(): array
-    {
-        return array_merge([
-            'fieldsets' => $this->fieldsets(),
-            'pretty' => $this->pretty(),
-            'preview' => $this->preview(),
-            'reset' => $this->getReset(),
-            'toggle' => $this->toggle(),
-        ], parent::props());
-    }
-
-    protected function setFieldsets(array $fieldsets): void
-    {
-        foreach ($fieldsets as $key => &$fieldset) {
-            $fieldset = Blueprint::extend($fieldset);
-
-            // extends fieldsets and fields
-            $fields = Blueprint::fieldsProps($fieldset['fields'] ?? []);
-            $this->fields = array_replace_recursive($this->fields, $fields);
-            $fields = $this->form($fields)->fields();
-
-            $fieldset['name'] = $key;
-            $fieldset['label'] = I18n::translate($fieldset['label'], $fieldset['label']);
-            $fieldset['fields'] = $fields->toArray();
-            $fieldset['headline'] = $fieldset['headline'] ?? null;
-            $fieldset['open'] = $fieldset['open'] ?? false;
-        }
-
-        $this->fieldsets = $fieldsets;
-    }
-
-    protected function setPretty(bool $pretty = false): void
-    {
-        $this->pretty = $pretty;
-    }
-
-    protected function setPreview(string|null $preview = null): void
-    {
-        $this->preview = $preview;
-    }
-
-    protected function setReset(bool $reset = false): void
-    {
-        $this->reset = $reset;
-    }
-
-    protected function setToggle(bool $toggle = true): void
-    {
-        $this->toggle = $toggle;
-    }
-
-    public function toFormValue(): mixed
+    public function toFormValue(): array
     {
         return $this
             ->form()
-            ->reset()
-            ->fill(input: parent::toFormValue() ?? [])
-            ->fields()
+            ->fill(input: $this->value)
             ->toFormValues();
     }
 
-    public function toStoredValue(): mixed
+    public function toStoredValue(): string
     {
+        if ($this->isEmpty() === true) {
+            return '';
+        }
+
         $value = $this
             ->form()
-            ->reset()
-            ->submit(input: parent::toStoredValue())
+            ->submit(input: $this->value)
             ->toStoredValues();
+
+        // store booleans like the content storage does
+        array_walk_recursive($value, function (&$item) {
+            if (is_bool($item) === true) {
+                $item = $item === true ? 'true' : 'false';
+            }
+        });
 
         return Json::encode($value, pretty: $this->pretty());
     }
 
-    public function validations(): array
+    public function errors(): array
     {
-        return [
-            'accordion' => function ($value) {
-                $errors = [];
+        $errors    = parent::errors();
+        $value     = $this->toFormValue();
+        $fieldsets = $this->fieldsets();
+        $form      = $this->form()->fill(input: $value);
 
-                foreach ($this->fieldsets() as $fieldset) {
-                    $fields = $this->form($fieldset['fields'] ?? [])->fields()->reset()->fill(input: $value);
-
-                    foreach ($fields as $field) {
-                        $fieldErrors = $field->errors();
-
-                        if (empty($fieldErrors) === false) {
-                            foreach ($fieldErrors as $error) {
-                                $errors[] = $error . ' (' . $fieldset['label'] . ' > ' . $field->label() . ')';
-                            }
-                        }
-                    }
+        // one error per subfield and rule, so the Panel lists each of them
+        foreach ($fieldsets as $fieldset) {
+            foreach ($fieldset['fields'] as $name => $field) {
+                foreach ($form->field($name)->errors() as $key => $error) {
+                    $errors[$name . '.' . $key] = $error . ' (' . $fieldset['label'] . ' > ' . ($field['label'] ?? $name) . ')';
                 }
-
-                if (empty($errors) === false) {
-                    throw new InvalidArgumentException(implode("\n", array_values($errors)));
-                }
-
-                return true;
             }
-        ];
+        }
+
+        return $errors;
     }
 }

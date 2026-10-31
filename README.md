@@ -114,6 +114,7 @@ fields:
 
 - Click a headline to open or close its fieldset. With `toggle: true`, opening a fieldset closes the others.
 - The button next to the field label opens or closes all fieldsets at once.
+- The Panel remembers which fieldsets are open, per field and per page, in your browser.
 - Fieldsets with an invalid or missing value show a warning icon in their headline. When saving fails, they open automatically.
 
 ## Field methods

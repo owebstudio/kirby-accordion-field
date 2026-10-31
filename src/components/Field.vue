@@ -119,7 +119,17 @@ export default {
     },
     resetable() {
       return this.reset === true && this.disabled === false && this.$helper.object.length(this.default) > 0;
+    },
+    storageKey() {
+      if (this.endpoints?.field) {
+        return "kirby.accordion." + this.endpoints.field;
+      }
+
+      return null;
     }
+  },
+  created() {
+    this.open = this.restore() ?? {};
   },
   watch: {
     value: {
@@ -176,8 +186,23 @@ export default {
     resetForm() {
       this.$emit("input", {...this.object, ...this.default});
     },
+    restore() {
+      try {
+        return JSON.parse(localStorage.getItem(this.storageKey));
+      } catch {
+        return null;
+      }
+    },
     setOpen(name, open) {
       this.open[name] = open;
+
+      try {
+        if (this.storageKey) {
+          localStorage.setItem(this.storageKey, JSON.stringify(this.open));
+        }
+      } catch {
+        // the state is only remembered when the storage is available
+      }
     },
     subfields(fields) {
       const subfields = {};

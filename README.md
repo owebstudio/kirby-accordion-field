@@ -19,6 +19,7 @@ Kirby accordion field plugin collapses the content below headlines in Panel for 
 | ^3.0          | ^1.0                      |
 | ^4.0          | ^2.0                      |
 | ^5.0          | ^3.0                      |
+| ^6.0          | ^4.0                      |
 
 ## Usage
 
@@ -107,6 +108,10 @@ fields:
 
 ```
 
+## In the Panel
+
+- Click a headline to open or close its fieldset. With `toggle: true`, opening a fieldset closes the others.
+
 ## Field methods
 
 ### `->toAccordion()`
@@ -138,10 +143,15 @@ The default values of the package are:
 | Property            | Type    | Default | Description                                                                        |
 |:--------------------|:--------|:--------|:-----------------------------------------------------------------------------------|
 | default             | array   | []      | Allows assigning default values to fields                                          |
-| fieldesets          | array   | []      | Allows to define different form fields for each accordion                          |
-| fieldesets.open     | boolean | false   | Allows it to be loaded collapsed/expanded by default                               |
-| fieldesets.headline | string  | null    | Helps to add extra dynamic headline to each accordion and supports query template. |
+| fieldsets           | array   | []      | Allows to define different form fields for each accordion                          |
+| fieldsets.label     | string  | null    | Title of the fieldset, can be translated                                           |
+| fieldsets.open      | boolean | false   | Allows it to be loaded collapsed/expanded by default                               |
+| fieldsets.headline  | string  | null    | Helps to add extra dynamic headline to each accordion and supports query template. |
 | pretty              | boolean | false   | Saves pretty printed JSON in text files                                            |
 | preview             | string  | null    | Provides preview output for structure field and supports query template            |
 | reset               | boolean | false   | Restores the default values to the form if `default` prop is filled                |
 | toggle              | boolean | true    | Allows only one accordion to remain open when enabled                              |
+
+## Upgrading from 3.x
+
+Version 4 requires Kirby 6 and PHP 8.3 or newer. Your blueprints and content stay the same. If your own code extends the field class, it moved from `Kirby\Form\Field\AccordionField` to `Oweb\AccordionField\AccordionField`.

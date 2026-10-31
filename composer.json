@@ -7,7 +7,7 @@
   "keywords": [
     "kirby",
     "kirby-plugin",
-    "kirby5",
+    "kirby6",
     "owebstudio-plugin",
     "kirby-accordion"
   ],
@@ -31,13 +31,13 @@
     }
   },
   "require": {
-    "php": "^8.2",
+    "php": "^8.3",
     "getkirby/composer-installer": "^1.2"
   },
   "extra": {
     "installer-name": "kirby-accordion-field",
     "kirby": {
-      "compatible": "^5.0"
+      "compatible": "^6.0"
     }
   },
   "prefer-stable": true

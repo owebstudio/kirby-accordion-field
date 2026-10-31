@@ -4,14 +4,23 @@
       :input="id"
       class="k-accordion-field"
   >
-    <template v-if="resetable" #options>
+    <template v-if="resetable || items.length > 1" #options>
       <k-button-group layout="collapsed">
         <k-button
+            v-if="resetable"
             icon="undo"
             text="Reset"
             size="xs"
             variant="filled"
             @click="resetForm"
+        />
+        <k-button
+            v-if="items.length > 1"
+            :icon="isAllOpen ? 'collapse' : 'expand'"
+            :title="$t(isAllOpen ? 'collapse.all' : 'expand.all')"
+            size="xs"
+            variant="filled"
+            @click="toggleAll"
         />
       </k-button-group>
     </template>
@@ -99,6 +108,9 @@ export default {
     };
   },
   computed: {
+    isAllOpen() {
+      return this.items.every(fieldset => this.isOpen(fieldset.name));
+    },
     items() {
       return Object.values(this.fieldsets).map(fieldset => ({
         ...fieldset,
@@ -182,6 +194,13 @@ export default {
       }
 
       return subfields;
+    },
+    toggleAll() {
+      const open = this.isAllOpen === false;
+
+      for (const fieldset of this.items) {
+        this.setOpen(fieldset.name, open);
+      }
     },
     toggleFieldset(name) {
       const open = this.isOpen(name) === false;

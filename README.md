@@ -113,6 +113,7 @@ fields:
 ## In the Panel
 
 - Click a headline to open or close its fieldset. With `toggle: true`, opening a fieldset closes the others.
+- The button next to the field label opens or closes all fieldsets at once.
 - Fieldsets with an invalid or missing value show a warning icon in their headline. When saving fails, they open automatically.
 
 ## Field methods

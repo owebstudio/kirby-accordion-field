@@ -131,6 +131,23 @@ class AccordionField extends InputField implements ProvidesNestedForm
         return $this->reset;
     }
 
+    public function isEmpty(): bool
+    {
+        return $this->isEmptyValue($this->value);
+    }
+
+    public function isEmptyValue(mixed $value = null): bool
+    {
+        if (is_array($value) === true) {
+            $value = array_filter(
+                $value,
+                fn ($item) => parent::isEmptyValue($item) === false
+            );
+        }
+
+        return parent::isEmptyValue($value);
+    }
+
     public function preview(): string|null
     {
         return $this->preview;
@@ -159,6 +176,10 @@ class AccordionField extends InputField implements ProvidesNestedForm
 
     public function toStoredValue(): string
     {
+        if ($this->isEmpty() === true) {
+            return '';
+        }
+
         $value = $this
             ->form()
             ->submit(input: $this->value)

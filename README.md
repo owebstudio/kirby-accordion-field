@@ -42,6 +42,7 @@ fields:
         label:
           tr: Adım 01
           en: Step 01
+        icon: user
         open: true
         headline: "{{first_name}} {{last_name}}"
         fields:
@@ -71,6 +72,7 @@ fields:
 
       step02:
         label: Step 02
+        icon: map
         fields:
           address:
             label: Address
@@ -145,6 +147,7 @@ The default values of the package are:
 | default             | array   | []      | Allows assigning default values to fields                                          |
 | fieldsets           | array   | []      | Allows to define different form fields for each accordion                          |
 | fieldsets.label     | string  | null    | Title of the fieldset, can be translated                                           |
+| fieldsets.icon      | string  | null    | Name of a Panel icon shown before the label                                        |
 | fieldsets.open      | boolean | false   | Allows it to be loaded collapsed/expanded by default                               |
 | fieldsets.headline  | string  | null    | Helps to add extra dynamic headline to each accordion and supports query template. |
 | pretty              | boolean | false   | Saves pretty printed JSON in text files                                            |

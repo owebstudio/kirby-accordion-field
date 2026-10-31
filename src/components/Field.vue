@@ -26,6 +26,7 @@
           class="k-accordion-summary"
           @click.prevent="toggleFieldset(fieldset.name)"
       >
+        <k-icon v-if="fieldset.icon" :type="fieldset.icon" class="k-accordion-icon"/>
         <span class="k-accordion-label">{{ fieldset.label }}</span>
         <span v-if="fieldset.headline" class="k-accordion-headline">{{ headlineFieldset(fieldset) }}</span>
       </summary>
@@ -203,6 +204,13 @@ export default {
   align-items: center;
   min-width: 0;
   padding-inline-end: .75rem;
+}
+
+.k-accordion-icon {
+  display: inline-flex;
+  vertical-align: middle;
+  margin-inline-end: .5rem;
+  color: var(--color-text-dimmed);
 }
 
 .k-accordion-label {

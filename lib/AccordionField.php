@@ -97,6 +97,7 @@ class AccordionField extends InputField implements ProvidesNestedForm
                 'label'    => I18n::translate($label, $label),
                 'fields'   => $fields,
                 'headline' => $fieldset['headline'] ?? null,
+                'icon'     => $fieldset['icon'] ?? null,
                 'open'     => $fieldset['open'] ?? false,
             ];
         }
